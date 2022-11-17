@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>DasKino | {{movies.movie_name}}</title>
+{% endblock %}
+{% block style %}
+<style>
+    .bg {
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        width: 100%;
+        height: 100vh;
+    }
+    .bl {
+        background: black;
+    }
+    .right-c {
+        margin-top: 150px;
+        color: #fff;
+    }
+    .pillow {
+        background: rgba(0, 0, 0, 0.13);
+        border-radius: 50px;
+        color: white;
+        border: solid 1px white;
+        padding: 5px 10px;
+        text-align: center;
+        width: 60%;
+    }
+    .title {
+        font-size: 50px;
+        padding: 10px 0px;
+    }
+    .rate {
+        margin: 10px 0px;
+        margin-left: 30px;
+    }
+
+    .desc {
+        margin: 5px 50px 5px 5px;
+    }
+    .btn-custom {
+        background-color: blueviolet;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        width: 230px;
+        margin: 5px;
+    }
+    .btn-custom i {
+        padding: 0px 5px;
+    }
+    .time {
+        margin: 5px;
+        display: inline;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row" style="margin-top: -63px">
+        <div class="col-7 bg">
+        </div>
+        <div class="col-5 bl">
+            <div class="row">
+                <div class="col-12 right-c">
+                    <h1 class="title">{{movies.movie_name}}</h1>
+                    <h4 class="pillow">{{movies.movie_genre}}</h4>
+                    <h4 style="padding: 5px 0px">
+                        {{movies.movie_duration}} |  {{movies.movie_rdate}} </h4>
+                    <p class="desc">{{movies.movie_des}}</p>
+                    <h2 class="rate"> {{movies.movie_rating}} Rating </h2>
+                    <button type="button" id="btn-time" class="btn btn-lg btn-custom">Book Now </button>
+
+                </div>
+                <div class="modal fade" id="shows" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"> Select cinema and timings </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    {% for i in cin %}
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h3>{{i.cinema_name}}</h3>
+                                        </div>
+                                        <div class="col-12 mb-4">
+                                            {% for j in i.cinema_show.all %}
+                                            {% if j.movie_id == movies.movie %}
+                                            <h5 class="time"><a href="/seat/{{j.shows}}"
+                                                    class="badge badge-primary">{{j.time}}</a></h5>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>  
+                                    </div>
+                                    {% endfor %}                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container d-none">
+        <div class="row mt-5">
+            <div class="col-3">
+                <div class="card">
+                    <img class="card-img-top" src="{{movies.movie_poster.url}}" alt="Card image cap">
+                    <div class="card-body">
+                        <h4 class="card-title">{{movies.movie_name}}</h4>
+                        <p class="card-text">{{movies.movie_rating}}</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cinema</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for i in cin %}
+                            <td scope="row"> {{i.cinema_name}} </td>
+                            {% for j in i.cinema_show.all %}
+                            {% if j.movie_id == movies.movie %}
+                            <td><a href="/seat/{{j.shows}}"> {{j.time}} </a></td>
+                            {% endif %}
+
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    {% block JQuery %}
+    <script>
+        $('#btn-time').click(function () {
+            $('#shows').modal('toggle')
+        });
+    </script>
+
+    {% endblock %}
